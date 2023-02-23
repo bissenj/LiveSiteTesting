@@ -1,0 +1,16 @@
+{
+  "name": "automated-testing-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "search": "cls & node ./tests/search_engine_test.js",
+    "portfolio": "cls & node ./tests/portfolio_test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.8.1"
+  }
+}
