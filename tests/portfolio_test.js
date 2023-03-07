@@ -55,7 +55,7 @@ else {
 		.build();  
 }
 
-// Navigate to google
+// Navigate to website
 driver.get(WEBSITE).then(() => {
 	runTests(driver);
 });
@@ -79,7 +79,10 @@ async function runTests(driver) {
 		// Test navigating to another page
 		await test_career_navigation_click(driver);
 
-		// Wait a bit before closing browser for UX
+		// Test clicking on the slider and navigating to a career page
+		await test_slider_navigation_click(driver);
+
+		// Wait a bit before closing browser
 		await driver.sleep(3500);		
 	}
 	catch(ex) {
@@ -292,6 +295,56 @@ async function test_career_navigation_click(driver) {
 
 
 
+/*
+	Test:  Clicking on slideshow and navigating to the career page.
+	Expected:  Site map opens, page move to career page.
+*/
+async function test_slider_navigation_click(driver) {
+	try {	
+		const CONTROL_BOX_SELECTOR = '.control-box:nth-child(7)';
+		const SLIDER_CLICK_SELECTOR = '#workHistorySlider1 .card:nth-child(6) .details .body p a';
+		const EXPECTED_TITLE = 'Career History - Now';		
+		const EXPECTED_TITLE_2 = 'Mountains and Code | Home';
+		
+
+		// Get the slider into view
+		await simulateClick(driver, CONTROL_BOX_SELECTOR, 4000);
+
+		// CLick on the slider link to go to the career page
+		await simulateClick(driver, SLIDER_CLICK_SELECTOR, 4000);
+		await driver.sleep(2500);		
+						
+
+		// Validate the Title
+		let title = await getDocumentTitle(driver);		
+		if (title != EXPECTED_TITLE) {
+			throw new Error('Title is missing or incorrect');
+		}
+		writeToLog('title on page 1 is good.');
+						
+
+		// Navigate Home		
+		await simulateClick(driver, '.header a div', 2000);
+		writeToLog('navigated back to home.');
+
+		// Validate the Title (now that we're on a new page)
+		title = await getDocumentTitle(driver);		
+		if (title != EXPECTED_TITLE_2) {
+			throw new Error('Title on third page is missing or incorrect');
+		}
+		writeToLog('title on home page is good.');
+
+		// If we got here, everything is good.
+		testPassed();
+
+	}
+	catch(ex) {
+		testFailed(ex.message);
+	}		
+}
+
+
+
 
 // ----------------------------------------------------------------------------
 // 					UTILITY FUNCTIONS 
@@ -314,6 +367,10 @@ function testFailed(message = undefined) {
 	}	
 }
 
+
+// ----------------------------------------------------------------------------
+// 					UTILITY WRAPPER FUNCTIONS 
+// ----------------------------------------------------------------------------
 
 async function getDocumentTitle(driver) {
 	let result = "";
