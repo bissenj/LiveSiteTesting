@@ -118,13 +118,13 @@ async function test_title(driver, title) {
 					if (title.includes(EXPECTED_TITLE)) {
 						testPassed();
 					} else {
-						testFailed();
+						throw new Error(`Expected title should be -${EXPECTED_TITLE}- but instead is -${title}-`);
 				}			
 			});		
 		});
 	}
 	catch(ex) {
-		testFailed(ex.message);
+		handleError(driver, ex);
 	}
 }
 
@@ -150,12 +150,12 @@ async function test_footer(driver) {
 				testPassed();
 			}
 			else {
-				testFailed();
+				throw new Error(`Footer Text should be -${EXPECTED_TEXT}- but instead is -${text}-`);
 			}		
 		});
 	}
 	catch(ex) {
-		testFailed(ex.message);
+		handleError(driver, ex);
 	}
 }
 
@@ -183,13 +183,12 @@ async function test_nav_click(driver) {
 			testPassed();
 		}
 		else {
-			testFailed();
+			throw new Error('Scroll Position is missing or not where it should be.');
 		}	
 	}
 	catch(ex) {
-		testFailed(ex.message);
-	}	
-	//writeToLog('finished test: test_menu_click');
+		handleError(driver, ex);
+	}		
 }
 
 
@@ -228,7 +227,7 @@ async function test_sitemap_click(driver) {
 
 	}
 	catch(ex) {
-		testFailed(ex.message);
+		handleError(driver, ex);
 	}		
 }
 
@@ -241,7 +240,7 @@ async function test_career_navigation_click(driver) {
 	try {	
 		const SITE_MAP_SELECTOR = '#menutoggle';
 		const CAREER_NAV_SELECTOR = '#site-map .menu-container .menu-items-column .row:nth-child(3) a';
-		const EXPECTED_TITLE = 'Career History in 6 questions - NWM';
+		const EXPECTED_TITLE = 'Career History - NWM';
 		const EXPECTED_TITLE_2 = 'Career History in 6 questions - NAH';
 		const EXPECTED_TITLE_3 = 'Mountains and Code | Home';
 		
@@ -256,7 +255,7 @@ async function test_career_navigation_click(driver) {
 		// Validate the Title
 		let title = await getDocumentTitle(driver);		
 		if (title != EXPECTED_TITLE) {
-			throw new Error('Title is missing or incorrect');
+			throw new Error(`Title -${EXPECTED_TITLE}- is missing or incorrect, got ${title} instead.`);
 		}
 		writeToLog('title on page 1 is good.');
 		
@@ -289,7 +288,7 @@ async function test_career_navigation_click(driver) {
 
 	}
 	catch(ex) {
-		testFailed(ex.message);
+		handleError(driver, ex);
 	}		
 }
 
@@ -339,7 +338,7 @@ async function test_slider_navigation_click(driver) {
 
 	}
 	catch(ex) {
-		testFailed(ex.message);
+		handleError(driver, ex);
 	}		
 }
 
@@ -364,7 +363,15 @@ function testFailed(message = undefined) {
 	if (message) {
 		console.error(`...Failure Details:`);
 		console.error(`[`, message, ']');
-	}	
+	}		
+}
+
+function handleError(driver, error) {
+	testFailed(error.message);
+
+	driver.get(WEBSITE).then(() => {
+		console.log('Navigated back to home.  Resuming tests...');
+	});
 }
 
 
