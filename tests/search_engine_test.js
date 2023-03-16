@@ -11,7 +11,9 @@ const BROWSER = CHROME_BROWSER;
 
 const SEARCH_ENGINE = 'https://duckduckgo.com';
 //const SEARCH_ENGINE = 'https://www.google.com';			// This will fail, use to test failure path
-const SEARCH_TERM = 'selenium 2';
+const SEARCH_TERM = 'selenium';
+
+console.log('This is a change');
 
 let driver = undefined;
 
